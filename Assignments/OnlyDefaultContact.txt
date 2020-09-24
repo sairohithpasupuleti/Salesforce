@@ -1,0 +1,33 @@
+trigger OnlyDefaultContact on Account (after insert) {
+    
+    List<Contact> NewContact = new List<Contact>();
+ 	for(Account a: trigger.new) 
+    {
+        if(NewContact == NULL)
+        {
+ 		Contact c = new Contact (LastName='Info', FirstName ='Info', Email= 'info' + Account.Website, AccountId = a.Id );
+ 		NewContact.add(c);
+        insert NewContact;
+        }
+ 	}
+	List<Id> p = new List<Id>();
+    for(Account TotalContacts: Trigger.new)
+    {
+        p.add(TotalContacts.Id);
+    }
+    List<Contact> TotalContacts = new List<Contact>([Select Id from Contact where AccountId IN : p]);
+    Integer NumberOfContacts = TotalContacts.Size();
+    for(Account b : [Select Id from Account where Id IN : p])
+    {
+       if(NumberOfContacts == 0)
+       {
+            b.Only_Default_Contact__c = TRUE;
+ 			update b;
+       }
+       else
+       {
+             b.Only_Default_Contact__c = False;
+			 update b;
+       }
+ 	}
+}

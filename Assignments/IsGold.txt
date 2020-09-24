@@ -1,0 +1,9 @@
+trigger IsGold on Opportunity (after insert, after update) {
+     List<Opportunity>  newList = [Select Amount, Account.is_gold__c FROM Opportunity WHERE Amount >= 20];
+        for(Opportunity p : newList)
+        {
+         	p.Account.is_gold__c = TRUE;
+ 			update p;
+            system.debug('Updated Successfully');
+        }
+}
